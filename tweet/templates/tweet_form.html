@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% load widget_tweaks %}
+{% block title %}
+tweet
+{% endblock %}
+{% block content %}
+<h1 class="text-center mt-4">Welcome to Bimal Django project</h1>
+<h2>{% if form.instance.pk %} Edit {% else %} Create {% endif %}</h2>
+<form method="post" enctype="multipart/form-data" class="form">
+    {% csrf_token %}
+    {% render_field form.text placeholder="Write the tweet" class+="form-control" %}
+    <!-- {{form.as_p}} -->
+    {{form.photo}}
+    <br>
+    <br>
+    <button type="submit" class="btn btn-warning">submit</button>
+    <br>
+    <br>
+    <a href="{% url 'tweet_list'  %}" class="btn btn-primary">go back</a>
+</form>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'layout1.html' %}
+{% load static %}
+
+{% block title %}Logbook - Vehicle History{% endblock %}
+
+{% block content %}
+  <header>
+    <div class="header-container text-center py-4">
+      <h1>Logbook</h1>
+      <p>Access the history of detected vehicles.</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="container mt-4">
+      <h2 class="text-center text-primary">Vehicle Detection History</h2>
+      <div class="table-responsive mt-4">
+        <table class="table table-dark table-hover text-center">
+          <thead>
+            <tr>
+              <th>Vehicle Number</th>
+              <th>Detection Date</th>
+              <th>Detection Time</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Sample Data (Replace with Django dynamic data later) -->
+            <tr>
+              <td>KA-05-AB-1234</td>
+              <td>2024-02-01</td>
+              <td>10:45 AM</td>
+              <td><span class="badge bg-success text-dark">Resident</span></td>
+            </tr>
+            <tr>
+              <td>MH-12-XY-5678</td>
+              <td>2024-02-01</td>
+              <td>12:30 PM</td>
+              <td><span class="badge bg-warning text-dark">Newcomer</span></td>
+            </tr>
+            <tr>
+              <td>DL-09-PQ-2468</td>
+              <td>2024-01-31</td>
+              <td>05:20 PM</td>
+              <td><span class="badge bg-danger text-dark">Criminal</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+{% endblock %}

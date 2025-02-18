@@ -1,0 +1,133 @@
+/* Reset styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100%;
+    font-family: 'Georgia', serif;
+    background: linear-gradient(180deg, #000, #222);
+}
+
+/* Gate Container */
+.gate {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle, #111, #000);
+    z-index: 1000;
+}
+
+/* Gate Panels */
+.gate-panel {
+    width: 50%;
+    height: 100%;
+    background: url("{% static 'images/wood-texture.jpg' %}") no-repeat center center/cover;
+    position: absolute;
+    top: 0;
+    transition: transform 6s ease-in-out;
+    box-shadow: 0 0 25px rgba(255, 0, 0, 0.5); /* Soft red glow */
+    border: 5px solid #8B0000;
+    transform: perspective(1000px) rotateY(-90deg); /* Start Open */
+}
+
+.gate-panel.left {
+    left: 0;
+    transform-origin: left;
+}
+
+.gate-panel.right {
+    right: 0;
+    transform-origin: right;
+}
+
+/* Gate Details */
+.gate-details {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+/* Ornament (Luxury Red Design) */
+.ornament {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120px;
+    height: 120px;
+    background: url("{% static 'images/red-ornament.png' %}") no-repeat center center/cover;
+    transform: translate(-50%, -50%);
+    animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+    0% { filter: brightness(1); }
+    100% { filter: brightness(1.3); }
+}
+
+/* Handles */
+.handle {
+    position: absolute;
+    top: 50%;
+    width: 25px;
+    height: 110px;
+    background: linear-gradient(90deg, #8B0000, #B22222);
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+}
+
+.gate-panel.left .handle {
+    left: 30px;
+    transform: translateY(-50%);
+}
+
+.gate-panel.right .handle {
+    right: 30px;
+    transform: translateY(-50%);
+}
+
+/* Declined Message Container */
+.declined-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 1001;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.declined-container i {
+    font-size: 5rem;
+    color: #FF0000; /* Red Cross */
+    animation: bounce 1s infinite alternate;
+}
+
+@keyframes bounce {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-10px); }
+}
+
+.declined-container p {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #FF0000;
+    text-shadow: 2px 2px 5px rgba(255, 0, 0, 0.5);
+    margin-top: 10px;
+    animation: fadeIn 2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* Show declined message */
+.declined-container.show {
+    opacity: 1;
+}

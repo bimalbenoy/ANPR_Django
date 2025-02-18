@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gate Closing Animation</title>
+    <link rel="stylesheet" href="{% static 'stylegateclose.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Gate Container -->
+    <div class="gate">
+        <div class="gate-panel left">
+            <div class="gate-details">
+                <div class="ornament"></div>
+                <div class="handle"></div>
+            </div>
+        </div>
+        <div class="gate-panel right">
+            <div class="gate-details">
+                <div class="ornament"></div>
+                <div class="handle"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Declined Message Container -->
+    <div class="message-container declined-container">
+        <i class="fas fa-times-circle"></i>
+        <p>Declined</p>
+    </div>
+
+    <script src="{% static 'gateclose.js' %}" defer></script>
+</body>
+</html>
