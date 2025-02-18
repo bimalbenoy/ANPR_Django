@@ -18,6 +18,7 @@
         <table class="table table-dark table-hover text-center">
           <thead>
             <tr>
+              <th>Owner Name</th>
               <th>Vehicle Number</th>
               <th>Detection Date</th>
               <th>Detection Time</th>
@@ -26,24 +27,29 @@
           </thead>
           <tbody>
             <!-- Sample Data (Replace with Django dynamic data later) -->
+            {% for i in vehicles %}
             <tr>
-              <td>KA-05-AB-1234</td>
-              <td>2024-02-01</td>
-              <td>10:45 AM</td>
-              <td><span class="badge bg-success text-dark">Resident</span></td>
+              <td>{{i.owner_name}}</td>
+              <td>{{i.vehicle_number}}</td>
+              <td>{{i.registered_date}}</td>
+              <td>{{i.registered_time}}</td>
+              <td>
+                {% if i.category == "Resident" %}
+                    <span class="badge bg-success text-dark">{{ i.category }}</span>
+                {% elif i.category == "Visitor" %}
+                    <span class="badge bg-warning text-dark">{{ i.category }}</span>
+                {% elif i.category == "Criminal" %}
+                    <span class="badge bg-danger text-light">{{ i.category }}</span>
+                {% else %}
+                    <span class="badge bg-secondary">{{ i.category }}</span>  <!-- Default case -->
+                {% endif %}
+            </td>
+              
+              
+              
             </tr>
-            <tr>
-              <td>MH-12-XY-5678</td>
-              <td>2024-02-01</td>
-              <td>12:30 PM</td>
-              <td><span class="badge bg-warning text-dark">Newcomer</span></td>
-            </tr>
-            <tr>
-              <td>DL-09-PQ-2468</td>
-              <td>2024-01-31</td>
-              <td>05:20 PM</td>
-              <td><span class="badge bg-danger text-dark">Criminal</span></td>
-            </tr>
+            {% endfor %}
+            
           </tbody>
         </table>
       </div>

@@ -7,22 +7,79 @@ from django.http import HttpResponse
 from django.core.files.storage import FileSystemStorage
 from .running import process_video_file
 from .databasecomp import  compare_license_plates
-from .models import Residents
+from .models import Residents,Logbook
+from django.contrib import messages
+from django.utils.timezone import now
+from datetime import date, datetime
+
 
 
 
 def index(request):
     return render(request, 'index.html')  
+def animatedregister(request):
+    return render(request, 'animatedregister.html') 
+def registerveh(request):
+    if request.method == "POST":
+        owner_name = request.POST.get("ownerName")
+        vehicle_number = request.POST.get("vehicleNumber")
+        resident_address = request.POST.get("residentAddress")
+        category = request.POST.get("category")
+
+        
+        if Residents.objects.filter(vehicle_number=vehicle_number).exists():
+            messages.error(request, "Vehicle Number already registered!")
+            return redirect("registerveh")  
+
+        
+        Residents.objects.create(
+            owner_name=owner_name,
+            vehicle_number=vehicle_number,
+            resident_address=resident_address,
+            category=category,
+            registered_at=now(),  
+        )
+
+        messages.success(request, "Vehicle registered successfully!")
+        return redirect("registerveh")  
+
+    return render(request, "registervehicle.html")  
+def registerlogbook(request):
+    if request.method == "POST":
+        owner_name = request.POST.get("ownerName2")
+        vehicle_number = request.POST.get("vehicleNumber2")
+        resident_address = request.POST.get("residentAddress2")
+        category = request.POST.get("category2")
+
+        
+        if Logbook.objects.filter(vehicle_number=vehicle_number).exists():
+            messages.error(request, "Vehicle Number already registered!")
+            return redirect("registerlogbook")  
+
+    
+        Logbook.objects.create(
+            owner_name=owner_name,
+            vehicle_number=vehicle_number,
+            resident_address=resident_address,
+            category=category,
+            registered_date=date.today(),
+            registered_time=datetime.now().time()
+        )
+
+        messages.success(request, "Vehicle registered successfully!")
+        return redirect("registerlogbook")  
+
+    return render(request, "registerlogbook.html")  
 def home1(request):
     return render(request, 'home1.html')
 def logbook(request):
-    return render(request, 'logbook.html') 
+    vehicles=Logbook.objects.all()
+    return render(request, 'logbook.html',{'vehicles':vehicles}) 
 def gateopen(request):
     return render(request, 'approvegate.html')
 def gateclose(request):
     return render(request, 'declinegate.html')  
-# def upload(request):
-#     return render(request, 'upload.html') 
+
 def upload(request):
     if request.method=="POST":
         with open("tweet/car_plate_data.txt", "w") as file:
@@ -35,8 +92,17 @@ def upload(request):
         plates=compare_license_plates("tweet/car_plate_data.txt")
         
         for i in plates:
-            resident = Residents.objects.filter(Plate_number=i)
-            if resident.exists():
+            resident = Residents.objects.filter(vehicle_number=i).first()
+            if resident:
+
+                Logbook.objects.create(
+                owner_name=resident.owner_name,
+                vehicle_number=resident.vehicle_number,
+                resident_address=resident.resident_address,
+                category=resident.category,
+                registered_date=date.today(),
+                registered_time=datetime.now().time()
+                )
                 return render(request,'approvegate.html',{'No':i})
         return render(request,'declinegate.html')   
                 

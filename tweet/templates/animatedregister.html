@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Registration with Animated Car</title>
+    <style>
+        /* CSS Styles */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .form-box {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+        }
+
+        input, select {
+            background: #444;
+            color: white;
+        }
+
+        button {
+            background: linear-gradient(to right, red, #ff5757);
+            color: white;
+            cursor: pointer;
+        }
+
+        .car {
+            position: absolute;
+            bottom: 50px; /* Position the car above the road */
+            left: 100%;
+            width: 200px;
+            height: 100px;
+            background-image: url('https://i.imgur.com/3QZQZ9C.png'); /* Sprite sheet */
+            background-size: 800px 100px; /* Total width of sprite sheet */
+            animation: drive 5s linear infinite, carAnimation 0.8s steps(4) infinite;
+        }
+
+        @keyframes drive {
+            0% { left: 100%; }
+            100% { left: -200px; }
+        }
+
+        @keyframes carAnimation {
+            0% { background-position: 0 0; }
+            100% { background-position: -800px 0; } /* Shift sprite sheet */
+        }
+
+        .road {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background: #444;
+        }
+
+        .road::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: repeating-linear-gradient(to right, white 0%, white 50%, transparent 50%, transparent 100%);
+            background-size: 20px 100%;
+            transform: translateY(-50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-box">
+            <h2>Vehicle Registration</h2>
+            <input type="text" placeholder="Owner's Name">
+            <input type="text" placeholder="Vehicle Number">
+            <input type="text" placeholder="Resident Address">
+            <select>
+                <option>Select Category</option>
+                <option>Car</option>
+                <option>Truck</option>
+                <option>Motorcycle</option>
+            </select>
+            <button onclick="startAnimation()">Register</button>
+        </div>
+        <div class="car" id="car"></div> <!-- Animated car -->
+        <div class="road"></div> <!-- Road at the bottom -->
+    </div>
+
+    <script>
+        // JavaScript to control the animation
+        function startAnimation() {
+            let car = document.getElementById('car');
+            car.style.animation = 'drive 5s linear, carAnimation 0.8s steps(4) infinite';
+            car.addEventListener('animationend', () => {
+                car.style.animation = 'none';
+                car.style.left = '100%';
+                setTimeout(() => {
+                    car.style.animation = 'drive 5s linear, carAnimation 0.8s steps(4) infinite';
+                }, 0);
+            });
+        }
+    </script>
+</body>
+</html>
