@@ -1,0 +1,133 @@
+/* Reset default margin and padding */
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+  font-family: 'Georgia', serif;
+  background: linear-gradient(180deg, #000, #222); /* Luxurious gradient background */
+}
+
+/* Gate Container */
+.gate {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle, #111, #000);
+  z-index: 1000;
+}
+
+/* Gate Panels */
+.gate-panel {
+  width: 50%;
+  height: 100%;
+  background: url("{% static 'images/wood-texture.jpg' %}") no-repeat center center/cover;
+  position: absolute;
+  top: 0;
+  transition: transform 7s cubic-bezier(0.65, 0, 0.35, 1); /* Slower, smooth animation */
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.5); /* Soft glow */
+  border: 5px solid #8B4513;
+  transform: perspective(1000px) rotateY(0deg);
+}
+
+.gate-panel.left {
+  left: 0;
+  transform-origin: left;
+}
+
+.gate-panel.right {
+  right: 0;
+  transform-origin: right;
+}
+
+/* Gate Details */
+.gate-details {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* Ornament (Luxury Gold Design) */
+.ornament {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120px;
+  height: 120px;
+  background: url("{% static 'images/gold-ornament.png' %}") no-repeat center center/cover;
+  transform: translate(-50%, -50%);
+  animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+  0% { filter: brightness(1); }
+  100% { filter: brightness(1.4); }
+}
+
+/* Handles */
+.handle {
+  position: absolute;
+  top: 50%;
+  width: 25px;
+  height: 110px;
+  background: linear-gradient(90deg, #8B4513, #A0522D);
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+}
+
+.gate-panel.left .handle {
+  left: 30px;
+  transform: translateY(-50%);
+}
+
+.gate-panel.right .handle {
+  right: 30px;
+  transform: translateY(-50%);
+}
+
+/* Approved Message Container */
+.approved-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 1001;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.approved-container i {
+  font-size: 5rem;
+  color: #FFD700; /* Gold tick */
+  animation: bounce 1s infinite alternate;
+}
+
+@keyframes bounce {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-10px); }
+}
+
+.approved-container p {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 2px 2px 5px rgba(255, 215, 0, 0.5);
+  margin-top: 10px;
+  animation: fadeIn 2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Show approved message */
+.approved-container.show {
+  opacity: 1;
+}

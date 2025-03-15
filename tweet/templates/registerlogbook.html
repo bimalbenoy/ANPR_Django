@@ -128,8 +128,8 @@
         <p class="success-message" id="successMessage">✅ Registration Successful!</p>
     </div>
 
-    <div class="car-right">
-        <img src="{% static 'redcar.gif' %}" alt="Car Animation">
+    <div class="car-container">
+        <iframe src="{% static 'tweet/caranimation.html' %}" class="car-animation"></iframe>
     </div>
 </div>
 
@@ -153,7 +153,7 @@
             successMessage.style.display = "block";
             setTimeout(() => {
                 successMessage.style.display = "none";
-            }, 3000);
+            }, 5000);
         });
     });
 </script>

@@ -40,7 +40,7 @@ class Logbook(models.Model):
     ]
 
     owner_name = models.CharField(max_length=100,default='Unknown')
-    vehicle_number = models.CharField(max_length=20, unique=True)
+    vehicle_number = models.CharField(max_length=20)
     resident_address = models.TextField(default="Not Provided")
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES,default='Resident')
     registered_date = models.DateField(auto_now_add=True)  

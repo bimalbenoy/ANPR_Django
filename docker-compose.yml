@@ -1,0 +1,35 @@
+services:
+  web:
+    build: .
+    image: application:django
+    container_name: app_container
+    restart: always
+    expose:
+      - "8000"
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles  # Persistent storage for static files
+      - model_volume:/app/models  # Persist AI model files
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DEBIAN_FRONTEND=noninteractive
+    command: >
+        sh -c "python manage.py migrate &&
+        python manage.py collectstatic --noinput &&
+        gunicorn --workers=3 --timeout 10000 --bind 0.0.0.0:8000 basic.wsgi:application"
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_container
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - static_volume:/app/staticfiles  # Share static files with Nginx
+      - ./nginx.conf:/etc/nginx/nginx.conf  # Use custom Nginx config
+    depends_on:
+      - web
+
+volumes:
+  static_volume:
+  model_volume:

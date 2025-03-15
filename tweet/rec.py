@@ -1,144 +1,142 @@
+import os
 import cv2
 import pandas as pd
 from ultralytics import YOLO
 from paddleocr import PaddleOCR
 from datetime import datetime
-import os
 import logging
 
-# Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Prevent OpenCV GUI errors in headless environments
+os.environ["QT_QPA_PLATFORM"] = "offscreen"
 
+# Set up logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 class PlateRecognition:
-    def __init__(self, model_path='tweet/best.pt', class_file='tweet/coco1.txt'):
+    def __init__(self, model_path="models/best.pt"):
         # Load the YOLO model
         self.model = YOLO(model_path)
 
-        # Load class names
-        with open(class_file, "r") as f:
-            self.class_list = f.read().split("\n")
+        # Initialize PaddleOCR with local model paths
+        self.ocr = PaddleOCR(
+            use_angle_cls=True,  
+            lang="en",
+            det_model_dir="/app/models/en_PP-OCRv3_det_infer",
+            rec_model_dir="/app/models/en_PP-OCRv3_rec_infer",
+            cls_model_dir="/app/models/ch_ppocr_mobile_v2.0_cls_infer",
+        )
 
-        # Initialize PaddleOCR
-        self.ocr = PaddleOCR(use_angle_cls=True, lang='en')
+    def correct_text(self, text):
+        if len(text) < 6:
+            return text  
+
+        corrected_text = list(text)
+        for i in range(2):
+            if corrected_text[i] == '0':
+                corrected_text[i] = 'O'
+        for i in range(2, 4):
+            if corrected_text[i] == 'O':
+                corrected_text[i] = '0'
+        for i in range(4, len(corrected_text)):
+            if corrected_text[i] == 'O' and i > 4:
+                corrected_text[i] = '0'
+        return ''.join(corrected_text)
 
     def recognize_text(self, crop):
-        # Convert to grayscale for better OCR performance
-        gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
+        if crop is None or crop.size == 0:
+            logging.warning("⚠️ Empty crop, skipping OCR.")
+            return ""
 
-        # Optional preprocessing (can be fine-tuned based on your images)
+        # Convert to grayscale and apply GaussianBlur
+        gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
         gray = cv2.GaussianBlur(gray, (5, 5), 0)
 
         # Perform OCR
         result = self.ocr.ocr(gray, cls=True)
 
-        # Handle cases where OCR doesn't find any text
-        if not result or not result[0]:
-            logging.warning("No text detected by OCR.")
-            return ""
+        # Extract text from OCR result
+        detected_text = "".join([line[1][0] for line in result[0]]).strip() if result and result[0] else ""
+        detected_text = detected_text.replace("IND", "").strip()
+        detected_text = detected_text.replace(" ", "").replace(".", "").upper()
+        words = detected_text.split()
+        detected_text = " ".join(sorted(set(words), key=words.index))
+        detected_text = "".join(char for char in detected_text if char.isalnum())
 
-        # Extract text from the result
-        text = "".join([line[1][0] for line in result[0]]).strip()
+        if "KL" in detected_text:
+            detected_text = detected_text[detected_text.index("KL") :]
 
-        # Clean up the detected text
-        text = text.replace("IND", "").strip()
-        return text
+        detected_text = self.correct_text(detected_text)
 
-    def process_frame(self, frame, processed_numbers):
-        frame = cv2.resize(frame, (1020, 500))
-        results = self.model.predict(frame)
-        boxes = results[0].boxes.data if results and hasattr(results[0].boxes, 'data') else None
+        if not detected_text:
+            logging.warning("❌ No text detected by OCR.")
 
-        if boxes is None or boxes.numel() == 0:  # Check if tensor is empty
-            logging.warning("No objects detected in the frame.")
+        return detected_text
+
+    def process_frame(self, frame):
+        if frame is None:
+            logging.error("❌ Error: Invalid frame received.")
             return []
 
-        px = pd.DataFrame(boxes.cpu().numpy()).astype("float")  # Convert to DataFrame for processing
+        results = self.model.predict(frame, conf=0.5)
+        boxes = results[0].boxes.data if results and hasattr(results[0].boxes, "data") else None
+
+        if boxes is None or boxes.numel() == 0:
+            logging.warning("⚠️ No license plate detected.")
+            return []
 
         detected_data = []
-
-        for _, row in px.iterrows():
-            x1, y1, x2, y2 = map(int, row[:4])
-            d = int(row[5])
-            c = self.class_list[d]
-
-            # Crop the detected object
+        for box in boxes:
+            x1, y1, x2, y2, _, _ = map(int, box.tolist()[:6])
             crop = frame[y1:y2, x1:x2]
 
-            # Display the cropped plate image
-            cv2.imshow('Cropped Plate Image', crop)
-
             text = self.recognize_text(crop)
-            logging.info(f"Detected Text: {text}")
-
-            # Avoid duplicate entries
-            if text and text not in processed_numbers:
-                processed_numbers.add(text)
-                current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                detected_data.append((text, current_datetime))
+            if text:
+                detected_data.append((text, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
                 cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
                 cv2.putText(frame, text, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-        cv2.imshow("RGB", frame)
         return detected_data
 
     def process_input_file(self, input_file):
         is_image = input_file.lower().endswith((".jpg", ".jpeg", ".png"))
-        processed_numbers = set()
-        all_detected_data = []
 
         if is_image:
-            # Process the image
             frame = cv2.imread(input_file)
             if frame is None:
-                logging.error("Error: Unable to read the image file.")
+                logging.error("❌ Error: Unable to read the image file.")
                 return []
-            detected_data = self.process_frame(frame, processed_numbers)
-            all_detected_data.extend(detected_data)
-            cv2.waitKey(0)  # Wait for key press to close the image window
+            return self.process_frame(frame)
         else:
-            # Process the video
             cap = cv2.VideoCapture(input_file)
             if not cap.isOpened():
-                logging.error("Error: Unable to open video file.")
+                logging.error("❌ Error: Unable to open video file.")
                 return []
 
-            count = 0
-
+            detected_plates = []
             while True:
                 ret, frame = cap.read()
                 if not ret:
-                    break  # Exit loop when the video ends
-
-                count += 1
-                if count % 3 != 0:  # Process every third frame to reduce computation
-                    continue
-
-                detected_data = self.process_frame(frame, processed_numbers)
-                all_detected_data.extend(detected_data)
-
-                if cv2.waitKey(1) & 0xFF == 27:  # Break on pressing 'ESC'
+                    break
+                detected_plates.extend(self.process_frame(frame))
+                if cv2.waitKey(1) & 0xFF == 27:
                     break
 
             cap.release()
-
-        cv2.destroyAllWindows()
-        return all_detected_data
+            return detected_plates
 
     def save_results(self, detected_plates, output_file="tweet/car_plate_data.txt"):
         if detected_plates:
             with open(output_file, "a") as file:
-                if os.stat(output_file).st_size == 0:  # Check if file is empty and write headers
+                if os.stat(output_file).st_size == 0:
                     file.write("NumberPlate\tDate\tTime\n")
                 for plate, timestamp in detected_plates:
                     file.write(f"{plate}\t{timestamp}\n")
-            logging.info(f"Results saved to {output_file}")
-
+            logging.info(f"✅ Results saved to {output_file}")
 
 # Example usage
 if __name__ == "__main__":
-    input_file = "car_video1.mp4"  # Replace with your input file (.mp4 or .jpeg)
+    input_file = "car_video1.mp4"
     plate_recognition = PlateRecognition()
     detected_plates = plate_recognition.process_input_file(input_file)
     plate_recognition.save_results(detected_plates)
-    logging.info("Detection complete.")
+    logging.info("🎉 License Plate Detection Complete.")

@@ -1,7 +1,4 @@
 def compare_license_plates(file_path):
-    """
-    Reads license plates from a file and returns them as a list.
-    """
     license_plates = []  
     try:
         with open(file_path, 'r') as file:

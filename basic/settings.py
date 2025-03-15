@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-8#j15$-_(tk1*_z$g%b*o$@=(69^txkq1ibll5ls5p23kz!02&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*", "localhost", "127.0.0.1", "web", "nginx"]
 
 
 # Application definition
@@ -130,14 +130,22 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 STATIC_URL='/static/'
-STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "tweet/static")]  
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'tweet', 'static'),  # Ensure this path is correct
+# ]
+
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 LOGIN_URL='/accounts/login'
 
-LOGIN_REDIRECT_URL='/tweet/'
+LOGIN_REDIRECT_URL='/tweet/home1'
 
-LOGOUT_REDIRECT_URL='/tweet/'
+LOGOUT_REDIRECT_URL='/tweet/home1'
 
 
 

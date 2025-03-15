@@ -1,0 +1,222 @@
+/* Global styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  background-color: #000 !important;
+}
+
+/* Body styling */
+body {
+  font-family: 'Roboto', sans-serif;
+  color: #ddd;
+  line-height: 1.6;
+}
+
+/* Header styling */
+header {
+  background: #000;
+  color: #fff;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  margin-top: 6rem;
+}
+
+header p {
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
+  color: #aaa;
+}
+
+/* Features Section */
+.features-section {
+  max-width: 1400px;
+  margin: 3rem auto;
+  text-align: center;
+  padding: 0 2rem;
+}
+
+.features-section h2 {
+  font-size: 2rem;
+  color: #66ccff;
+  margin-bottom: 2rem;
+}
+
+/* Flexbox Container */
+.features-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+  margin: 0 auto;
+}
+
+/* Feature Cards */
+.feature-card {
+  background: #1a1a1a;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+  padding: 3rem;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 350px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+}
+
+/* LGBTQ+ Rainbow Animated Icons */
+.feature-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(90deg, 
+              red, orange, yellow, green, blue, indigo, violet);
+  background-size: 400%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbow 4s linear infinite;
+  transition: transform 0.4s ease, filter 0.3s ease;
+}
+
+/* Icon animation */
+@keyframes rainbow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Icon Hover Effect */
+.feature-card:hover .feature-icon {
+  transform: scale(1.2) rotate(8deg);
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+}
+
+/* Title */
+.feature-card h3 {
+  font-size: 1.6rem;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+/* Description */
+.feature-card p {
+  font-size: 1.2rem;
+  color: #bbb;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+}
+
+/* Button Styling */
+.custom-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, #66ccff, #0077ff);
+  color: #121212;
+  padding: 1rem 2rem;
+  text-decoration: none;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: background 0.3s ease, transform 0.3s ease;
+  width: 100%;
+  text-align: center;
+}
+
+.custom-btn:hover {
+  background: #48a9d6;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Footer */
+footer {
+  background: #000 !important;
+  color: #aaa;
+  text-align: center;
+  padding: 1rem 0;
+  margin-top: 3rem;
+}
+
+footer p {
+  font-size: 0.9rem;
+}
+
+/* About Section */
+.about-section {
+  padding: 50px 20px;
+  background-color: #1a1a1a; /* Dark background to match your theme */
+  text-align: center;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  min-height: 100vh; /* Ensure the section is tall enough */
+}
+
+.about-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.about-text {
+  flex: 1 1 60%;
+  text-align: left;
+  color: #ddd; /* Light text color for readability */
+}
+
+.about-text h2 {
+  font-size: 2rem;
+  color: #66ccff; /* Matching your theme's accent color */
+  margin-bottom: 1.5rem;
+}
+
+.about-text p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #bbb; /* Slightly lighter text for paragraphs */
+}
+
+.about-images {
+  flex: 1 1 30%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.about-image {
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6); /* Darker shadow for consistency */
+}
+
+/* Visibility Classes for Scroll Animation */
+.hidden {
+  opacity: 0;
+  transform: translateY(50px);
+}
+
+.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

@@ -349,11 +349,14 @@ Upload Files - Number Plate Recognition
     <div class="upload-section" id="upload-section">
         <div class="card-custom text-center">
             <i class="fas fa-video"></i>
-            <h3>Upload Video</h3>
+            <h3>Upload Video or Image</h3>
             <form id="upload-form" method="POST" enctype="multipart/form-data" onsubmit="showLoading(event)">
                 {% csrf_token %}
                 <label for="video-upload">Drag and drop a video or click to upload</label>
                 <input type="file" id="video-upload" name="photo" accept="video/mp4, video/avi, video/mov">
+                <br><br>
+                <label for="image-upload">Drag and drop an image or click to upload</label>
+                <input type="file" id="image-upload" name="photo" accept="image/png, image/jpeg, image/jpg">
                 <button type="submit" class="upload-btn">Submit</button>
             </form>
         </div>
@@ -362,7 +365,7 @@ Upload Files - Number Plate Recognition
     <!-- Loading Animation -->
     <div class="loader" id="loading-animation">
         <div class="loader-inner">
-            <h1>Ami & Fidu are Cooking...</h1>
+            <h1>OCR and Yolo are Cooking...</h1>
             <div id="cooking">
                 <div class="bubble"></div>
                 <div class="bubble"></div>
@@ -386,8 +389,20 @@ Upload Files - Number Plate Recognition
 <script>
     function showLoading(event) {
         event.preventDefault(); // Prevent form from submitting immediately
+        const videoInput = document.getElementById('video-upload');
+        const imageInput = document.getElementById('image-upload');
+
+        // Check if at least one file is selected
+        if (!videoInput.files[0] && !imageInput.files[0]) {
+            alert("Please upload a video or an image.");
+            return;
+        }
+
+        // Show loading animation
         document.getElementById('upload-section').style.display = 'none';
         document.getElementById('loading-animation').style.display = 'flex';
+
+        // Submit the form after 2 seconds
         setTimeout(() => { document.getElementById('upload-form').submit(); }, 2000);
     }
 </script>

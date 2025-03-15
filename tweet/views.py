@@ -11,6 +11,7 @@ from .models import Residents,Logbook
 from django.contrib import messages
 from django.utils.timezone import now
 from datetime import date, datetime
+import os
 
 
 
@@ -19,6 +20,7 @@ def index(request):
     return render(request, 'index.html')  
 def animatedregister(request):
     return render(request, 'animatedregister.html') 
+@login_required
 def registerveh(request):
     if request.method == "POST":
         owner_name = request.POST.get("ownerName")
@@ -71,7 +73,9 @@ def registerlogbook(request):
 
     return render(request, "registerlogbook.html")  
 def home1(request):
+
     return render(request, 'home1.html')
+@login_required
 def logbook(request):
     vehicles=Logbook.objects.all()
     return render(request, 'logbook.html',{'vehicles':vehicles}) 
@@ -80,13 +84,19 @@ def gateopen(request):
 def gateclose(request):
     return render(request, 'declinegate.html')  
 
+
+@login_required
 def upload(request):
     if request.method=="POST":
         with open("tweet/car_plate_data.txt", "w") as file:
             file.write("")
-        photo = request.FILES.get('photo')
-        fs = FileSystemStorage(location='uploads/videos/')
-        filename = fs.save(photo.name, photo)
+        uploaded_file = request.FILES.get('photo')
+        file_extension = os.path.splitext(uploaded_file.name)[1].lower()
+        if file_extension in ['.mp4', '.avi', '.mov']:  # Video file
+            fs = FileSystemStorage(location='uploads/videos/')
+        elif file_extension in ['.jpg', '.jpeg', '.png']:  # Image file
+            fs = FileSystemStorage(location='uploads/images/')
+        filename = fs.save(uploaded_file.name, uploaded_file)
         file_path = fs.path(filename)
         process_video_file(file_path)
         plates=compare_license_plates("tweet/car_plate_data.txt")
@@ -103,7 +113,10 @@ def upload(request):
                 registered_date=date.today(),
                 registered_time=datetime.now().time()
                 )
-                return render(request,'approvegate.html',{'No':i})
+                if resident.category in ['Resident', 'Visitor']:
+                    return render(request,'approvegate.html',{'No':i})
+
+                
         return render(request,'declinegate.html')   
                 
             
@@ -157,7 +170,7 @@ def register(request):
             user.set_password(form.cleaned_data['password1'])
             user.save()
             login(request,user)
-            return redirect('tweet_list')
+            return redirect('home1')
     else:
         form=UserRegistrationForm()
     return render(request,'registration/register.html',{'form':form})

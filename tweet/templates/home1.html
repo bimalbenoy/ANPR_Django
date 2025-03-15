@@ -1,57 +1,345 @@
 
 {% extends "layout1.html" %}
-{% load static %}
+{% load static %} 
+ 
 
-
-  {% block style %}  
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <link rel="stylesheet" href="{% static 'style.css' %}">
+{% block style %}  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'tweet/style.css' %}">
+  <!-- <link rel="stylesheet" href="/static/tweet/style.css"> -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  {% endblock %}
-  {% block content %}
-  <body>
-    <header>
-      <div class="header-container">
-        <h1>Number Plate Recognition System</h1>
-        <p>Streamlining Vehicle Identification with Precision</p>
-      </div>
-    </header>
-    
-    <main>
-      <section class="features-section">
-        <h2>Explore Our Features</h2>
-        <div class="features-container">
-          
-          <!-- Feature: Registration -->
-          <div class="feature-card">
-            <i class="fas fa-car-side feature-icon"></i>
-            <h3>Registration</h3>
-            <p>Easily register vehicle details in our system.</p>
-            <a href="{% url 'registerveh' %}" class="custom-btn">Get Started</a>
-          </div>
-  
-          <!-- Feature: Find the Car -->
-          <div class="feature-card">
-            <i class="fas fa-search-location feature-icon"></i>
-            <h3>Find the Car</h3>
-            <p>Locate vehicles quickly using our smart tools.</p>
-            <a href="{% url 'upload' %}" class="custom-btn">Search Now</a>
-          </div>
-  
-          <!-- Feature: Logbook -->
-          <div class="feature-card">
-            <i class="fas fa-book feature-icon"></i>
-            <h3>Logbook</h3>
-            <p>Access detailed history of all activities.</p>
-            <a href="{% url 'logbook' %}" class="custom-btn">View Logs</a>
-          </div>
-          
-        </div>
-      </section>
-    </main>
-  
-  
-  
-  </body>
+  <style>
+    /* Animation styles */
+    .hidden {
+      opacity: 0;
+      transform: translateY(50px);
+      transition: opacity 1s ease-out, transform 1s ease-out;
+    }
+    .visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
+    /* Updated About Section - Modern and Beautiful */
+    .about-section {
+      background: linear-gradient(135deg, #1a1a1a, #000); /* Dark gradient background */
+      padding: 60px 20px;
+      border-radius: 15px;
+      box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      color: #fff;
+      margin: 40px auto;
+      max-width: 1200px;
+    }
+
+    .about-section h2 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      color: #66ccff; /* Accent color */
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .about-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .about-text {
+      max-width: 600px;
+      font-size: 1.1em;
+      line-height: 1.8;
+      color: #ddd;
+      text-align: left;
+    }
+
+    .about-text p {
+      margin-bottom: 20px;
+    }
+
+    /* Dataset Link Styling */
+    .dataset-link {
+      color: #66ccff;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    .dataset-link:hover {
+      color: #48a9d6;
+      text-decoration: underline;
+    }
+
+    /* Metrics Section */
+    .metrics-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+
+    .metric-card {
+      background: #2a2a2a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      width: 200px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .metric-card h3 {
+      font-size: 1.2em;
+      color: #66ccff;
+      margin-bottom: 10px;
+    }
+
+    .metric-card p {
+      font-size: 1.5em;
+      color: #fff;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    /* Total Accuracy Card */
+    .total-accuracy-card {
+      background: #66ccff; /* Bright accent color */
+      color: #1a1a1a; /* Dark text for contrast */
+    }
+
+    .total-accuracy-card h3 {
+      color: #1a1a1a; /* Dark text for contrast */
+    }
+
+    .total-accuracy-card p {
+      color: #1a1a1a; /* Dark text for contrast */
+    }
+
+    .about-images {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      width: 100%;
+    }
+
+    .about-images div {
+      background: #2a2a2a; /* Darker background for image cards */
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer; /* Indicates the image is clickable */
+    }
+
+    .about-images div:hover {
+      transform: translateY(-10px);
+      box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .about-images img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      margin-bottom: 15px;
+    }
+
+    .about-images p {
+      font-size: 0.9em;
+      color: #bbb;
+      margin: 0;
+    }
+
+    /* Lightbox Styles */
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    }
+
+    .lightbox.active {
+      display: flex;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<body>
+  <header>
+    <div class="header-container">
+      <h1>Number Plate Recognition System</h1>
+      <p>Streamlining Vehicle Identification with Precision</p>
+    </div>
+  </header>
+  
+  <main>
+    <section class="features-section">
+      <h2>Explore Our Features</h2>
+      <div class="features-container">
+        <div class="feature-card">
+          <i class="fas fa-car-side feature-icon"></i>
+          <h3>Registration</h3>
+          <p>Easily register vehicle details in our system.</p>
+          <a href="{% url 'registerveh' %}" class="custom-btn">Get Started</a>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-search-location feature-icon"></i>
+          <h3>Find the Car</h3>
+          <p>Locate vehicles quickly using our smart tools.</p>
+          <a href="{% url 'upload' %}" class="custom-btn">Search Now</a>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-book feature-icon"></i>
+          <h3>Logbook</h3>
+          <p>Access detailed history of all activities.</p>
+          <a href="{% url 'logbook' %}" class="custom-btn">View Logs</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Our Model Section -->
+    <section id="about-model" class="about-section hidden">
+      <h2>About Our Model</h2>
+      <div class="about-container">
+        <div class="about-text">
+          <p>
+            Our AI-powered Number Plate Recognition Model uses state-of-the-art deep learning techniques 
+            to accurately detect and recognize vehicle license plates in real-time.
+          </p>
+          <p>
+            Trained on diverse datasets, the model excels in various conditions, including low light, motion blur, 
+            and complex backgrounds, ensuring high precision and reliability.
+          </p>
+          <p>
+            This model is trained using <strong>YOLOv8</strong> on the 
+            <a href="https://universe.roboflow.com/roboflow-universe-projects/license-plate-recognition-rxg4e/dataset/4" 
+               class="dataset-link" target="_blank">License Plate Recognition Dataset</a>.
+          </p>
+        </div>
+
+        <!-- Metrics Section -->
+        <div class="metrics-container">
+          <div class="metric-card">
+            <h3>mAP50</h3>
+            <p>0.98</p>
+          </div>
+          <div class="metric-card">
+            <h3>mAP50-95</h3>
+            <p>0.68</p>
+          </div>
+          <div class="metric-card">
+            <h3>Precision</h3>
+            <p>0.98</p>
+          </div>
+          <div class="metric-card">
+            <h3>Recall</h3>
+            <p>0.94</p>
+          </div>
+          <!-- Total Accuracy Card -->
+          <div class="metric-card total-accuracy-card">
+            <h3>Total Accuracy</h3>
+            <p>97.14%</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">(Model + OCR)</p>
+          </div>
+        </div>
+
+        <!-- Images Section -->
+        <div class="about-images">
+          <div>
+            <img src="{% static 'tweet/confusion_matrix.png' %}" alt="Confusion Matrix" class="lightbox-trigger">
+            <p>The confusion matrix shows the performance of our model by comparing actual vs predicted values.</p>
+          </div>
+          <div>
+            <img src="{% static 'tweet/confusion_matrix_normalized.png' %}" alt="Normalized Confusion Matrix" class="lightbox-trigger">
+            <p>The normalized confusion matrix highlights class-wise accuracy.</p>
+          </div>
+          <div>
+            <img src="{% static 'tweet/F1_curve.png' %}" alt="F1 Score Curve" class="lightbox-trigger">
+            <p>The F1 score curve represents the model's balance between precision and recall.</p>
+          </div>
+          <div>
+            <img src="{% static 'tweet/P_curve.png' %}" alt="Precision Curve" class="lightbox-trigger">
+            <p>The precision curve shows how precise the model predictions are at different thresholds.</p>
+          </div>
+          <div>
+            <img src="{% static 'tweet/PR_curve.png' %}" alt="Precision-Recall Curve" class="lightbox-trigger">
+            <p>The precision-recall curve helps evaluate the trade-off between precision and recall.</p>
+          </div>
+          <div>
+            <img src="{% static 'tweet/R_curve.png' %}" alt="Recall Curve" class="lightbox-trigger">
+            <p>The recall curve indicates how well our model identifies actual positives.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+      <img src="" alt="Lightbox Image" id="lightbox-image">
+    </div>
+  </main>
+
+  <!-- JavaScript for Scroll Animation and Lightbox -->
+  <script>
+    // Scroll Animation
+    document.addEventListener("DOMContentLoaded", function() {
+      const aboutModel = document.getElementById("about-model");
+
+      function handleScroll() {
+        const sectionPosition = aboutModel.getBoundingClientRect().top;
+        const screenPosition = window.innerHeight / 1.3;
+
+        if (sectionPosition < screenPosition) {
+          aboutModel.classList.add("visible");
+        } else {
+          aboutModel.classList.remove("visible");
+        }
+      }
+
+      window.addEventListener("scroll", handleScroll);
+      handleScroll(); // Run once on page load
+    });
+
+    // Lightbox Functionality
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImage = document.getElementById("lightbox-image");
+    const lightboxTriggers = document.querySelectorAll(".lightbox-trigger");
+
+    lightboxTriggers.forEach(trigger => {
+      trigger.addEventListener("click", () => {
+        lightboxImage.src = trigger.src;
+        lightbox.classList.add("active");
+      });
+    });
+
+    lightbox.addEventListener("click", () => {
+      lightbox.classList.remove("active");
+    });
+  </script>
+</body>
 {% endblock %}
